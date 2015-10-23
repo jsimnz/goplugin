@@ -6,7 +6,7 @@ test: test_plugin/test_plugin.so
 	go test
 
 # Build/Compile test plugin as shared lib
-test_plugin/test_plugin.so: test_plugin/test_plugin.go test_plugin/tp_gen.go
+test_plugin/test_plugin.so: test_plugin/test_plugin.go test_plugin/*.go
 	@echo ">> BUILDING TEST PLUGIN..."
 	go build -buildmode="c-shared" -o test_plugin/test_plugin.so test_plugin/*.go 
 
