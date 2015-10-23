@@ -1,2 +1,2 @@
-test_plugin/*.h
-test_plugin/*.so
+.h
+*.so
