@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"strings"
 
-	"gopkgs.com/dl.v1"
+	"github.com/jsimnz/dl"
 )
 
 type Type uint16
@@ -21,7 +21,7 @@ type Type uint16
 // informs a PluginManager what kind of plugin has been
 // loaded
 type Plugin interface {
-	Type() Type
+	// Type() Type
 }
 
 // A helper struct to be embedded to more easily
@@ -238,10 +238,10 @@ func (pm *PluginManager) savePlugin(p *plugin) error {
 // Grab the type of plugin from the export _PluginType function
 func (p plugin) getType() Type {
 	var typeFn func() uint16
-	fnName := getExportedFnName(p.name, "Type")
+	fnName := "_Type"
 	p.lib.Sym(fnName, &typeFn)
 	if typeFn == nil {
-		panic("Failed to load plugin: Missing _PluginType function")
+		panic("Failed to load plugin: Missing _Type function")
 	}
 	return Type(typeFn())
 }

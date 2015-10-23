@@ -1,27 +1,32 @@
+/*
+ * 			==============================
+ *   			  PLEASE READ THIS
+ * 			==============================
+ *
+ * This IS NOT an example of how to use this library
+ * and implement a plugin system for your application.
+ *
+ * From a purely functional point of view, this text file
+ * is 100% accurate, however there are some aspects that 
+ * are against the goplugin convention, or does not have
+ * any type safety or compile checking.
+ *
+ */
+
 package main
 
 import (
 	"github.com/jsimnz/goplugin"
 )
 
-import "C"
-
 const example_plugin = goplugin.Type(iota)
 
-var (
-	p = TestPlugin{}
-)
+var p = testPlugin{}
 
-type TestPlugin struct{}
+type testPlugin struct{}
 
-func (tp TestPlugin) Test() {}
-
-func (tp TestPlugin) Type() goplugin.Type {
-	return example_plugin
-}
+func (tp testPlugin) Test() {}
 
 func init() {
-	goplugin.RegisterPlugin(p)
+	goplugin.RegisterPlugin(testPlugin{})
 }
-
-func main() {}

@@ -23,10 +23,6 @@ type examplePluginFactory struct {
 
 func (plugin examplePluginFactory) Test() {}
 
-func (plugin examplePluginFactory) Type() Type {
-	return example_plugin
-}
-
 func NewTestPluginManager() *PluginManager {
 	pm, _ := NewPluginManager(PluginManagerConfig{
 		Dir: "./test_plugin/",
@@ -125,7 +121,7 @@ func TestSavedPluginInterfaceByType(t *testing.T) {
 func TestSavedPluginInterfaceNumMethods(t *testing.T) {
 	pm := NewRegisteredInterface()
 	iface := pm.interfaces[example_plugin]
-	if len(iface.methods) != 2 {
+	if len(iface.methods) != 1 {
 		t.Errorf("Expected num methods as 2, got: %v", len(iface.methods))
 	}
 }

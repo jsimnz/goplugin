@@ -52,7 +52,7 @@ extern "C" {
 
 extern void _TestPlugin_Test_GoPlugin();
 
-extern GoUint16 _TestPlugin_Type_GoPlugin();
+extern GoUint16 _Type();
 
 #ifdef __cplusplus
 }
