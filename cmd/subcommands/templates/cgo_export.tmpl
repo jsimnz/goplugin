@@ -1,0 +1,12 @@
+package main
+
+{{range .}}
+	{{template "func_export" .}}
+{{end}}
+
+{{define "func_export"}}
+//export {{.ExportFnName}}
+func {{.ExportFnName}}({{.FormattedParams}}) {
+	...
+}
+{{end}}
