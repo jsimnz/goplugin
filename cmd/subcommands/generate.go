@@ -62,6 +62,41 @@ func (pm pluginMethod) FormattedParams() string {
 	return ""
 }
 
+func (pm pluginMethod) FormattedResults() string {
+	if len(pm.results) > 0 {
+		var output string
+		for i, r := range pm.results {
+			if i == 0 {
+				output += typeToString(r.Type)
+			} else {
+				output += fmt.Sprintf(", %v", typeToString(r.Type))
+			}
+		}
+		return "(" + output + ")"
+	}
+
+	return ""
+}
+
+func (pm pluginMethod) InstanceMethodCall() string {
+	var args string
+	if len(pm.params) > 0 {
+		for i, _ := range pm.params {
+			if i == 0 {
+				args += fmt.Sprintf("arg%v", i)
+			} else {
+				args += fmt.Sprintf(", arg%v", i)
+			}
+		}
+	}
+
+	if len(pm.results) > 0 {
+		return fmt.Sprintf("return %v.%v(%v)", pm.instance, pm.name, args)
+	} else {
+		return fmt.Sprintf("%v.%v(%v)", pm.instance, pm.name, args)
+	}
+}
+
 var (
 	hasMainFunc       bool
 	pluginMethods     []*pluginMethod
