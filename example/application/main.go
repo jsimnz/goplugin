@@ -1,34 +1,39 @@
 package main
 
 import (
-	"github.com/jsimnz/example/plugin"
+	"fmt"
+
 	"github.com/jsimnz/goplugin"
+	"github.com/jsimnz/goplugin/example/application/plugin_api"
 )
 
 var (
 	cfg = goplugin.PluginManagerConfig{
-		Interface: (*ApplicationPlugin)(nil),
+		// Interface: (*ApplicationPlugin)(nil),
 
-		Dir: "some/dir",
+		Dir: "../plugins",
 	}
-	pluginMgr = goplugin.NewPluginManager(cfg)
+	pluginMgr *goplugin.PluginManager
 )
 
-func init() {
-	pluginMgr.RegisterInterface(goplugin.InterfaceConfig{
-		Identifier: APPLICATION_PLUGIN,
-		Interface:  (*ApplicationPlugin)(nil),
-		Factory:    ApplicationPluginFactory{},
+func main() {
+	pluginMgr, err := goplugin.NewPluginManager(cfg)
+	if err != nil {
+		panic(err)
+	}
+
+	pluginMgr.RegisterInterface(goplugin.PluginInterfaceConfig{
+		Identifier: plugin_api.APPLICATION_PLUGIN,
+		Interface:  (*plugin_api.ApplicationPlugin)(nil),
+		Factory:    plugin_api.ApplicationPluginFactory{},
 	})
 
 	pluginMgr.Init()
-}
 
-func main() {
 	a := 4
 	b := 2
-	for _, p := range pluginMgr.Plugins() {
-		plugin := (ApplicationPlugin)(p)
+	for _, p := range pluginMgr.Plugins(plugin_api.APPLICATION_PLUGIN) {
+		plugin := (p).(plugin_api.ApplicationPlugin)
 		fmt.Println("Running plugin:", plugin.Name())
 		fmt.Println("Plugin return:", plugin.Compute(a, b))
 	}

@@ -29,3 +29,5 @@ func (p PluginAdd) Compute(a, b int) int {
 func init() {
 	goplugin.RegisterPlugin((plugin_api.ApplicationPlugin)(p))
 }
+
+func main() {}
