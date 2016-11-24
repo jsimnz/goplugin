@@ -10,6 +10,15 @@ import (
 	"github.com/jsimnz/dl"
 )
 
+/*
+ int MY_TEST_VAR;
+*/
+import "C"
+
+func setTestVar(x int) {
+	C.MY_TEST_VAR = C.int(x)
+}
+
 type Type uint16
 
 // Interface required to be considered a plugin
@@ -108,7 +117,9 @@ func (pm *PluginManager) RegisterInterface(cfg PluginInterfaceConfig) error {
 	return nil
 }
 
-func RegisterPlugin(plugin interface{}) {}
+func RegisterPlugin(plugin interface{}) {
+	setTestVar(1)
+}
 
 // Initialze the PluginManager once all the
 // PluginInterfaces have been defined, and
