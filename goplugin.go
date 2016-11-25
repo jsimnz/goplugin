@@ -4,10 +4,10 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
+	plug "plugin"
 	"reflect"
 	"strings"
-
-	"github.com/jsimnz/dl"
+	// "github.com/jsimnz/dl"
 )
 
 /*
@@ -40,7 +40,7 @@ type PluginFactory struct {
 }
 
 type plugin struct {
-	lib      *dl.DL                 // reference to the loaded shared lib
+	lib      *plug.Plugin           // reference to the loaded shared lib
 	name     string                 // name of the plugin
 	iFace    *PluginInterfaceConfig // reference to the Plugin interface definition
 	instance reflect.Value          // loaded instance of the plugin
@@ -184,7 +184,8 @@ func (pm *PluginManager) loadPlugins() error {
 // the registered plugin types/interfaces
 func (pm *PluginManager) loadPlugin(path, name string) error {
 	libPath := path + "/" + name
-	lib, err := dl.Open(libPath, dl.RTLD_LAZY)
+	// lib, err := dl.Open(libPath, dl.RTLD_LAZY)
+	lib, err := plug.Open(libPath)
 	if err != nil {
 		return err
 	}
@@ -250,10 +251,15 @@ func (pm *PluginManager) savePlugin(p *plugin) error {
 func (p plugin) getType() Type {
 	var typeFn func() uint16
 	fnName := "_Type"
-	p.lib.Sym(fnName, &typeFn)
-	if typeFn == nil {
+	// p.lib.Sym(fnName, &typeFn)
+	fnIFace, err := p.lib.Lookup(fnName)
+	if fnIFace == nil || err != nil {
 		panic("Failed to load plugin: Missing _Type function")
 	}
+
+	typeFnVal := reflect.ValueOf(&typeFn).Elem()
+	typeFnVal.Set(reflect.ValueOf(fnIFace))
+
 	return Type(typeFn())
 }
 
@@ -275,13 +281,17 @@ func (p *plugin) bootstrap() error {
 		if !factoryMethod.IsValid() {
 			return errors.New("Plugin factory missing method")
 		}
-		factoryMethodPtr := factoryMethod.Addr()
+		factoryMethodPtr := factoryMethod.Addr().Interface()
+		factoryMethodPtrVal := reflect.ValueOf(factoryMethodPtr).Elem()
 
 		// attach factory method to exported method
-		p.lib.Sym(methodExported, factoryMethodPtr.Interface())
-		if factoryMethodPtr.IsNil() {
+		// p.lib.Sym(methodExported, factoryMethodPtr.Interface())
+		iFace, err := p.lib.Lookup(methodExported)
+		if iFace == nil || err != nil {
 			return errors.New("Could not get exported plugin method symbol")
 		}
+
+		factoryMethodPtrVal.Set(reflect.ValueOf(iFace))
 	}
 
 	return nil

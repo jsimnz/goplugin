@@ -8,7 +8,7 @@ test: test_plugin/test_plugin.so
 # Build/Compile test plugin as shared lib
 test_plugin/test_plugin.so: test_plugin/test_plugin.go test_plugin/*.go
 	@echo ">> BUILDING TEST PLUGIN..."
-	go build -buildmode="c-shared" -o test_plugin/test_plugin.so test_plugin/*.go 
+	go build -buildmode="plugin" -o test_plugin/test_plugin.so test_plugin/*.go 
 
 # Remove compiled assets
 clean:
